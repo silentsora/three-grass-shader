@@ -1,0 +1,42 @@
+{
+    "name": "vite-react-three-template",
+    "version": "0.0.1",
+    "description": "vite构建的react-three + typescript模板",
+    "author": "silentsora",
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "scripts": {
+        "dev": "vite",
+        "dist": "vite build",
+        "handover": "",
+        "qn": "",
+        "zip": ""
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "@types/gsap": "^3.0.0",
+        "@types/howler": "^2.2.1",
+        "@types/react": "^17.0.40",
+        "@types/react-dom": "^17.0.13",
+        "@types/three": "^0.138.0",
+        "@vitejs/plugin-react": "^1.2.0",
+        "autoprefixer": "^10.4.2",
+        "glslify": "^7.1.1",
+        "less": "^4.1.2",
+        "postcss-pxtorem": "^6.0.0",
+        "r3f-perf": "^5.4.6",
+        "typescript": "^4.6.2",
+        "vite": "^2.8.6"
+    },
+    "dependencies": {
+        "@react-three/drei": "^8.16.4",
+        "@react-three/fiber": "^7.0.26",
+        "gsap": "^3.6.1",
+        "howler": "^2.2.1",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "three": "^0.138.3"
+    }
+}
