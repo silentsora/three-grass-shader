@@ -33,32 +33,34 @@ export const GrassMaterial = shaderMaterial(
     `
   )
   
-  export const GrassMaterialVanilla = new THREE.ShaderMaterial({
-    uniforms: { 
-        time: { value: 0 }, 
-        map: { value: null }
-    },
-    // vertex shader
-    vertexShader: glsl`
-      uniform float time;
-      varying vec2 vUv;
+export const GrassMaterialVanilla = new THREE.ShaderMaterial({
+  uniforms: { 
+      time: { value: 0 }, 
+      map: { value: null }
+  },
+  // vertex shader
+  vertexShader: glsl`
+    uniform float time;
+    varying vec2 vUv;
 
-      void main() {
-        float range = 0.04 * sin(time) * pow((1.0 + position.y), 2.0);
-        vUv = uv;
-        vec3 newPosition = vec3(position.x + range, position.y, position.z);
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
-      }
-    `,
-    // fragment shader
-    fragmentShader: glsl`
-      uniform float time;
-      uniform sampler2D map;
-      varying vec2 vUv;
+    void main() {
+      vec4 modelPosition = modelViewMatrix * vec4(position, 1.0);
 
-      void main() {
-        vec4 color = texture2D(map, vUv);
-        gl_FragColor = color;
-      }
-    `
-    })
+      float range = 0.04 * sin(time + modelPosition.x + modelPosition.z) * pow((1.0 + position.y), 2.0);
+      vUv = uv;
+      vec3 newPosition = vec3(position.x + range, position.y, position.z);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+    }
+  `,
+  // fragment shader
+  fragmentShader: glsl`
+    uniform float time;
+    uniform sampler2D map;
+    varying vec2 vUv;
+
+    void main() {
+      vec4 color = texture2D(map, vUv);
+      gl_FragColor = color;
+    }
+  `
+})
