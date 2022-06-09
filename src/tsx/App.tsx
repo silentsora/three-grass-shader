@@ -6,7 +6,14 @@ import { Instances, OrbitControls, PerspectiveCamera, useTexture } from '@react-
 import { Perf } from 'r3f-perf'
 
 import { GrassMaterial, InstancedGrassMaterial } from './shaders/grass'
-import grassTexUrl from '../img/tex/grass.png';
+import { WaterMaterialDom } from './shaders/water'
+// import grassTexUrl from '../img/tex/grass.png';
+// @ts-ignore
+import grassTexUrl from '../img/tex/mc_grass.png';
+// @ts-ignore
+import meadowTexUrl from '../img/tex/mc_meadow.jpg';
+// @ts-ignore
+import skyTexUrl from '../img/skybox/rural_landscape_4k.jpg';
 
 const planeBufferGeometry = new THREE.PlaneBufferGeometry(1, 1);
 
@@ -27,8 +34,11 @@ function Plane (props: JSX.IntrinsicElements['mesh']) {
 function InstancedPlane (props: JSX.IntrinsicElements['instancedMesh']) {
     const ref = useRef<THREE.InstancedMesh>()
 
-    const num = 2000;
-    const maxDis = 10;
+    // const num = 6000;
+    // const maxDis = 20;
+
+    const num = 10000;
+    const maxDis = 100;
 
     extend({ InstancedGrassMaterial })
     const grassTex = useTexture(grassTexUrl)
@@ -140,10 +150,75 @@ function Grass () {
 }
 
 function Ground () {
+    const meadowTex = useTexture(meadowTexUrl, (tex) => {
+        if (tex instanceof THREE.Texture) {
+            let repeat = 80;
+            tex.repeat.set(repeat, repeat);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+        }
+    })
     return (
         <mesh rotation={[-Math.PI/2, 0, 0]} position={[0, -0.5, 0]}>
-            <meshStandardMaterial color={[1, 1, 1]} side={THREE.DoubleSide}/>
+            <meshStandardMaterial color={[1, 1, 1]} side={THREE.DoubleSide} map={meadowTex}/>
             <planeBufferGeometry args={[100, 100]}/>
+        </mesh>
+    )
+}
+
+function Sky () {
+    const skyTex = useTexture(skyTexUrl, tex => {
+        if (tex instanceof THREE.Texture) {
+            tex.mapping = THREE.EquirectangularReflectionMapping;
+            tex.encoding = THREE.sRGBEncoding;
+        }
+    })
+
+    return (<mesh>
+        <sphereBufferGeometry args={[50, 32]}/>
+        <meshBasicMaterial map={skyTex} side={THREE.BackSide}/>
+    </mesh>)
+}
+
+function Water () {
+    const skyTex = useTexture(skyTexUrl, tex => {
+        if (tex instanceof THREE.Texture) {
+            tex.mapping = THREE.EquirectangularReflectionMapping;
+            tex.encoding = THREE.sRGBEncoding;
+        }
+    })
+
+    // const matArgs = {
+    //     thickness: 1.4,
+    //     transmission: 1,
+    //     roughness: 0,
+    //     envMap: skyTex,
+    //     // color: 0xcccccc
+    //     // reflectivity: 0.5
+    // }
+
+    // const mat: any = composeMaterial();
+    // mat.envMap = skyTex;
+    // mat.transmission = 1;
+    // mat.thickness = 1.4;
+    // mat.roughness = 0;
+
+    // useFrame((state, delta) => {
+    //     WaterMaterial.uniforms.time.value += delta;
+    // })
+
+    // useEffect(() => {
+    //     WaterMaterial.transparent = true;
+    //     WaterMaterial.envMap = skyTex;
+    //     WaterMaterial.color = 0xff0000;
+    // })
+  
+    return (
+        // <mesh position={[0, 1, 0]} material={WaterMaterial}>
+        <mesh position={[0, -0.5, 0]}>
+            {/* <meshPhysicalMaterial {...matArgs} /> */}
+            <WaterMaterialDom envMap={skyTex}/>
+            <boxBufferGeometry args={[100, 0.5, 100]}/>
         </mesh>
     )
 }
@@ -168,9 +243,11 @@ function App() {
                         <hemisphereLight intensity={1} color={0xffffff} groundColor={0x888888}/>
                         <PerspectiveCamera name="FBO Camera" ref={virtualCamera} position={[0, 0, 5]} />
                         <OrbitControls camera={virtualCamera.current} {...args} />
-                        <Ground></Ground>
                         <Suspense fallback={null}>
+                            <Sky></Sky>
                             {/* <Grass /> */}
+                            <Ground></Ground>
+                            <Water></Water>
                             <InstancedPlane />
                         </Suspense>
                     </Canvas>
