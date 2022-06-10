@@ -215,10 +215,10 @@ function Water () {
   
     return (
         // <mesh position={[0, 1, 0]} material={WaterMaterial}>
-        <mesh position={[0, -0.5, 0]}>
+        <mesh position={[0, -1.0, 0]}>
             {/* <meshPhysicalMaterial {...matArgs} /> */}
             <WaterMaterialDom envMap={skyTex}/>
-            <boxBufferGeometry args={[100, 0.5, 100]}/>
+            <boxGeometry args={[100, 0.5, 100, 500, 1, 500]}/>
         </mesh>
     )
 }
@@ -240,7 +240,8 @@ function App() {
                 <div className="m-wrap">
                     <Canvas className='m-index'>
                         <Perf />
-                        <hemisphereLight intensity={1} color={0xffffff} groundColor={0x888888}/>
+                        <hemisphereLight intensity={0.6} color={0xffffff} groundColor={0x888888}/>
+                        <directionalLight intensity={1} color={0xffffff} position={[-1, 1, 1]}/>
                         <PerspectiveCamera name="FBO Camera" ref={virtualCamera} position={[0, 0, 5]} />
                         <OrbitControls camera={virtualCamera.current} {...args} />
                         <Suspense fallback={null}>
