@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef, Suspense, useMemo } from 'react'
 import * as THREE from 'three'
-import type { Camera } from 'three'
+import { BoxBufferGeometry, Camera } from 'three'
 import { Canvas, useFrame, extend } from '@react-three/fiber'
 import { Instances, OrbitControls, PerspectiveCamera, useTexture } from '@react-three/drei';
 import { Perf } from 'r3f-perf'
 
 import { GrassMaterial, InstancedGrassMaterial } from './shaders/grass'
 import { WaterMaterialDom } from './shaders/water'
-// import grassTexUrl from '../img/tex/grass.png';
 // @ts-ignore
+// import grassTexUrl from '../img/tex/grass.png';
 import grassTexUrl from '../img/tex/mc_grass.png';
 // @ts-ignore
 import meadowTexUrl from '../img/tex/mc_meadow.jpg';
@@ -118,7 +118,7 @@ function Grass () {
         let mat = GrassMaterial;
         mat.side = THREE.DoubleSide;
         mat.uniforms.map.value = grassTex;
-        mat.depthTest = false;
+        // mat.depthTest = false;
         mat.depthWrite = true;
         mat.transparent = true;
         return mat
@@ -130,7 +130,7 @@ function Grass () {
 
     const posArray = [];
     const grassArray = [];
-    const num = 500;
+    const num = 100;
     const maxDis = 5;
     for (let i = 0; i < num; i++) {
         let randomX = (Math.random() - 0.5) * maxDis
@@ -215,10 +215,11 @@ function Water () {
   
     return (
         // <mesh position={[0, 1, 0]} material={WaterMaterial}>
-        <mesh position={[0, -1.0, 0]}>
+        <mesh position={[0, -0.2, 0]}>
             {/* <meshPhysicalMaterial {...matArgs} /> */}
             <WaterMaterialDom envMap={skyTex}/>
-            <boxGeometry args={[100, 0.5, 100, 500, 1, 500]}/>
+            {/* <boxGeometry args={[100, 0.5, 100, 500, 1, 500]}/> */}
+            <boxGeometry args={[100, 0, 100, 100, 1, 100]}/>
         </mesh>
     )
 }
@@ -241,7 +242,7 @@ function App() {
                     <Canvas className='m-index'>
                         <Perf />
                         <hemisphereLight intensity={0.6} color={0xffffff} groundColor={0x888888}/>
-                        <directionalLight intensity={1} color={0xffffff} position={[-1, 1, 1]}/>
+                        <directionalLight intensity={1} color={0xffffff} position={[-2, 1, 1]}/>
                         <PerspectiveCamera name="FBO Camera" ref={virtualCamera} position={[0, 0, 5]} />
                         <OrbitControls camera={virtualCamera.current} {...args} />
                         <Suspense fallback={null}>
@@ -250,6 +251,10 @@ function App() {
                             <Ground></Ground>
                             <Water></Water>
                             <InstancedPlane />
+                            {/* <mesh>
+                                <meshStandardMaterial color={0xffffff} />
+                                <boxGeometry args={[1, 10, 1]} />
+                            </mesh> */}
                         </Suspense>
                     </Canvas>
                 </div>
